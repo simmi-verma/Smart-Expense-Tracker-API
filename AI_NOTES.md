@@ -2,7 +2,7 @@
 
 ## AI Tool Used
 
-* Claude (Sonnet 4.5) / Antigravity Assistant
+* Claude (Sonnet 4.5) 
 
 ---
 
@@ -19,7 +19,7 @@ AI assistance was utilized for:
 
 ---
 
-## 2. What I validated, tested, or changed (Concrete Examples)
+## 2. What I validated, tested, or changed 
 
 I reviewed, tested, and refined all AI-assisted code to ensure production quality and accuracy:
 
