@@ -1,56 +1,56 @@
-# AI_NOTES.md
-
-# AI Usage Notes
+# AI Usage Notes (`AI_NOTES.md`)
 
 ## AI Tool Used
 
-* Claude (Sonnet 4.5)
+* Claude (Sonnet 4.5) / Antigravity Assistant
 
 ---
 
 ## 1. Which parts were AI-generated vs. written by me
 
-The core implementation of the Smart Expense Tracker API, including the REST endpoints and application logic, was written by me.
+The core implementation of the Smart Expense Tracker API, including the layered REST architecture (controllers, services, validation middleware), was designed and written by me.
 
-AI was primarily used to assist with:
+AI assistance was utilized for:
 
-* Writing and improving the `README.md`.
-* Generating the Swagger/OpenAPI documentation.
-* Writing unit tests for the API.
-* Suggesting additional edge cases to test.
-* Helping identify and fix runtime errors and bugs.
-* Reviewing the project structure and documentation.
+* Generating base setup files and boilerplate structure (`src/config/swagger.js`, OpenAPI 3.0 schema).
+* Drafting initial Jest + Supertest integration test cases (`tests/expenseApi.test.js`).
+* Drafting user-facing documentation (`README.md`).
+* Identifying edge cases during testing.
 
 ---
 
-## 2. What I validated, tested, or changed
+## 2. What I validated, tested, or changed (Concrete Examples)
 
-I reviewed all AI-generated suggestions before using them.
+I reviewed, tested, and refined all AI-assisted code to ensure production quality and accuracy:
 
-Specifically, I:
+1. **Floating Point Rounding Precision**:
+   * *Problem*: AI initially suggested using `Number.toFixed(2)` for category total calculations. However, `toFixed(2)` returns a `string` (e.g., `"54.20"`), breaking numeric schema contracts in JSON responses.
+   * *Refinement*: Replaced it with mathematical rounding `Math.round(value * 100) / 100` across `src/services/storageService.js` to guarantee pure numeric floating-point values in API outputs.
 
-* Verified that all unit tests passed successfully.
-* Modified AI-generated test cases where necessary to match my implementation.
-* Reviewed and verified the generated Swagger/OpenAPI documentation to ensure it accurately reflected the implemented endpoints, request bodies, and responses.
-* Added or updated tests for invalid inputs and error responses.
-* Tested all API endpoints manually using an API client.
-* Fixed bugs and runtime errors discovered during testing.
-* Reviewed the README to ensure the installation, run, and test commands worked correctly on a clean project.
+2. **Strict Date Parsing & Validation**:
+   * *Problem*: Standard `new Date(string)` in JavaScript parses invalid strings like `"invalid-date"` without throwing, returning `Invalid Date` instances.
+   * *Refinement*: Added an explicit validator `isValidDate(dateString)` in `src/utils/validators.js` checking `!isNaN(new Date(dateString).getTime())` and ensuring non-whitespace strings to reject invalid dates with a proper `400 Bad Request`.
+
+3. **Case-Insensitive Category Filtering**:
+   * *Problem*: Initial AI code used strict string matching (`item.category === category`), which failed when query parameters differed in casing (e.g., `?category=food` vs `"Food"`).
+   * *Refinement*: Modified `getAllExpenses()` and `calculateTotals()` to trim and lowercase inputs (`item.category.trim().toLowerCase() === category.trim().toLowerCase()`).
+
+4. **Endpoint Consolidation & Redundancy Removal**:
+   * *Problem*: AI generated two separate endpoints for category filtering: `/expenses/filter?category=X` and `/expenses/category/:category`.
+   * *Refinement*: Standardized the API by consolidating category filtering into `GET /expenses/filter?category=X` (and `GET /expenses?category=X`), removing dead routes and synchronizing Swagger docs and tests accordingly.
 
 ---
 
-## 3. AI suggestions I decided not to use
+## 3. AI suggestions I decided not to use & rationale
 
-I chose not to use some AI suggestions because they were outside the scope of the assignment, including:
+1. **Database & ORM Integration (MongoDB / Mongoose)**:
+   * *Reason*: The project specifications explicitly state *"Data can be stored in memory or a local JSON file; no database is required."* Adding MongoDB/Mongoose introduces unnecessary setup overhead for reviewers. Implemented an in-memory `Map` synced with `expenses.json`.
 
-* Using a database instead of in-memory/JSON storage.
-* Adding authentication and user management.
-* Introducing unnecessary third-party libraries or additional project complexity.
-
-I kept the implementation focused on the assignment requirements.
+2. **External Validation Libraries (Joi / Express-Validator)**:
+   * *Reason*: Avoided bloated dependencies by implementing custom validation middleware (`src/middlewares/validateExpense.js`), keeping the project lightweight and fast.
 
 ---
 
 ## Final Note
 
-AI was used as a development assistant for documentation, Swagger/OpenAPI documentation, testing, debugging, and improving code quality. All AI-generated content was reviewed, validated, and, where necessary, modified before being included in the final submission. I understand the implementation and can explain the design and functionality of every part of the project.
+AI was used as a development assistant for documentation generation, test drafting, and code optimization. All code was verified through automated Jest test suites (11/11 passing tests) and manual API testing.

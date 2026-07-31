@@ -121,9 +121,8 @@ npm test
 
 ---
 
-### 4. Filter Expenses by Category (Dedicated Endpoints)
-- **Query Filter**: **`GET /expenses/filter?category=Food`**
-- **Path Filter**: **`GET /expenses/category/:category`**
+### 4. Filter Expenses by Category
+- **`GET /expenses/filter?category=Food`**
 - **Response `200 OK`**:
   ```json
   [
@@ -139,7 +138,7 @@ npm test
 
 ---
 
-### 4. Calculate Total Expenses
+### 5. Calculate Total Expenses
 - **`GET /expenses/totals`**
 - **Query Parameters**:
   - `category` (optional, string) — Filter totals calculation by specific category.
@@ -157,7 +156,7 @@ npm test
 
 ---
 
-### 5. Delete an Expense
+### 6. Delete an Expense
 - **`DELETE /expenses/:id`**
 - **Response `200 OK`**:
   ```json
